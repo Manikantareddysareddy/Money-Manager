@@ -11,8 +11,10 @@ const MoneyDetails = props => {
           alt="balance"
         />
         <div>
-          <h1 className="balance-heading">Your Balance</h1>
-          <p className="balance-para">{Balance}</p>
+          <p className="balance-heading">Your Balance</p>
+          <p className="balance-para" data-testid="balanceAmount">
+            Rs {Balance}
+          </p>
         </div>
       </div>
       <div className="Balance-container1">
@@ -22,8 +24,10 @@ const MoneyDetails = props => {
           alt="income"
         />
         <div>
-          <h1 className="balance-heading">Your Income</h1>
-          <p className="balance-para">{Income}</p>
+          <p className="balance-heading">Your Income</p>
+          <p className="balance-para" data-testid="incomeAmount">
+            Rs {Income}
+          </p>
         </div>
       </div>
       <div className="Balance-container2">
@@ -33,8 +37,10 @@ const MoneyDetails = props => {
           alt="expenses"
         />
         <div>
-          <h1 className="balance-heading">Your Expenses</h1>
-          <p className="balance-para">{Expenses}</p>
+          <p className="balance-heading">Your Expenses</p>
+          <p className="balance-para" data-testid="expensesAmount">
+            Rs {Expenses}
+          </p>
         </div>
       </div>
     </div>
@@ -42,3 +48,4 @@ const MoneyDetails = props => {
 }
 
 export default MoneyDetails
+
