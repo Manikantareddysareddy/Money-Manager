@@ -19,6 +19,12 @@ const transactionTypeOptions = [
   },
 ]
 
+const OptionEl = props => {
+  const {eachObj} = props
+  const {optionId, displayText} = eachObj
+  return <option value={optionId}>{displayText}</option>
+}
+
 class MoneyManager extends Component {
   state = {
     HistoryTransaction: [],
@@ -30,10 +36,36 @@ class MoneyManager extends Component {
     Expenses: 0,
   }
 
+  DeleteHistory = id => {
+    const {Balance, Income, Expenses} = this.state
+    const {HistoryTransaction} = this.state
+    const HistoryObj = HistoryTransaction.filter(
+      eachitems => eachitems.id === id,
+    )
+    if (HistoryTransaction.length === 1) {
+      this.setState({Income: 0})
+    }
+    this.setState(prevState => ({
+      HistoryTransaction: prevState.HistoryTransaction.filter(
+        each => each.id !== id,
+      ),
+      Balance: Balance - HistoryObj[0].amount,
+    }))
+    if (HistoryObj[0].type === 'EXPENSES') {
+      this.setState({
+        Expenses: Expenses - HistoryObj[0].amount,
+        Balance: Balance + HistoryObj[0].amount,
+      })
+    } else {
+      this.setState({Income: Income - HistoryObj[0].amount})
+    }
+  }
+
   onAddHistoryItem = event => {
     const {title, amount, type, Balance, Income, Expenses} = this.state
 
     event.preventDefault()
+
     const newHistoryItem = {
       id: uuidv4(),
       title,
@@ -45,8 +77,8 @@ class MoneyManager extends Component {
       title: '',
       amount: '',
     }))
-    if (type === 'Expenses') {
-      this.setState({Expenses: amount, Balance: Income - amount})
+    if (type === 'EXPENSES') {
+      this.setState({Expenses: Expenses + amount, Balance: Balance - amount})
     } else {
       this.setState({Balance: Balance + amount, Income: Income + amount})
     }
@@ -123,8 +155,9 @@ class MoneyManager extends Component {
                   value={type}
                   onChange={this.onType}
                 >
-                  <option>Income</option>
-                  <option>Expenses</option>
+                  {transactionTypeOptions.map(eachitem => (
+                    <OptionEl eachObj={eachitem} key={eachitem.optionId} />
+                  ))}
                 </select>
               </div>
               <button type="submit" className="Add-btn">
@@ -132,22 +165,22 @@ class MoneyManager extends Component {
               </button>
             </form>
           </div>
-          <div className="History-container">
+          <ul className="History-container">
             <h1 className="heading1">History</h1>
-            <div className="history-heading">
+            <div className="History-details1">
               <p className="para">Title</p>
               <p className="para">Amount</p>
               <p className="para">Type</p>
             </div>
-            <ul className="ul-container">
-              {HistoryTransaction.map(eachTransaction => (
-                <TransactionItem
-                  key={eachTransaction.id}
-                  transactionItem={eachTransaction}
-                />
-              ))}
-            </ul>
-          </div>
+
+            {HistoryTransaction.map(eachTransaction => (
+              <TransactionItem
+                key={eachTransaction.id}
+                transactionItem={eachTransaction}
+                DeleteHistory={this.DeleteHistory}
+              />
+            ))}
+          </ul>
         </div>
       </div>
     )
